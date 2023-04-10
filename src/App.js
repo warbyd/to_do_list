@@ -3,9 +3,9 @@ import './App.css';
 
 function App() {
     const [tasks, setTasks] = useState([
-      {name: 'Buy Shopping', priority: 'high', id: 1},
-      {name: 'Clean Bathroom', priority: 'low', id: 2},
-      {name: 'Cars MOT', priority: 'high', id: 3}
+      {name: 'Buy Shopping', priority: 'High', id: 1},
+      {name: 'Clean Bathroom', priority: 'Low', id: 2},
+      {name: 'Cars MOT', priority: 'High', id: 3}
     ])
     
   const handleTaskInput = (event) => {
@@ -13,32 +13,37 @@ function App() {
   }
 
   const changePriority = (e, id) => {
-
-    const newTasks = [...tasks]
-    console.log(e.target.value)
+    const newTasks = [...tasks];
     newTasks.forEach((task) => {
-      if(task.id === id){
-        task.priority = e.target.value
+      if (task.id === id) {
+        task.priority = e.target.value;
+        task.status = e.target.value === 'high' ? 'High' : 'Normal'; // update the status based on the selected priority
       }
-    })
-
-    console.log(newTasks)
+    });
     setTasks(newTasks);
   }
+  
+  
   
    
 
   const handleTaskSubmit = (event) => {
     event.preventDefault();
+    if (newTask.trim() === '') {
+      return; // Do nothing if newTask is empty or contains only whitespace
+    }
     const copyTasks = [...tasks];
     copyTasks.push({
       name: newTask,
-      priority: 'low',
+      priority: 'Low',
+      status: 'Normal',
       id: Date.now()
     });
     setTasks(copyTasks);
     setNewTask('');
   }
+  
+  
 
   
 
@@ -47,33 +52,39 @@ function App() {
     <>
       <h1>To Do List!</h1>
       <ul>
-        {tasks.map((task, index)=>{
-          return (
-            <li key = {task.id}>
-            <span>{task.name}</span>
-            
+      {tasks.map((task, index) => {
+  return (
+    <li key={task.id} className={task.priority === 'low' ? 'low' : 'high'}>
+      <span>
+        {task.name} - Priority: {task.priority}
+      </span>
+      <form>
+        <input
+          type="radio"
+          id={`low-${task.id}`}
+          name={`priority-${task.id}`}
+          value="low"
+          checked={task.priority === 'low'}
+          onChange={(e) => changePriority(e, task.id)}
+        />
+        <label htmlFor={`low-${task.id}`}>Low</label>
+        <input
+          type="radio"
+          id={`high-${task.id}`}
+          name={`priority-${task.id}`}
+          value="high"
+          checked={task.priority === 'high'}
+          onChange={(e) => changePriority(e, task.id)}
+        />
+        <label htmlFor={`high-${task.id}`}>High</label>
+      </form>
+    </li>
+  )
+})}
 
 
-            <form onSubmit={changePriority}>
-            <input type="radio" id="low" name="scale" value="low"></input>
-            <label htmlFor="low">low</label>
-            
 
-            
-            <input type="radio" id="high" name="scale" value="high"></input>
-            <label htmlFor="high">high</label>
-            <input type="text" id="new-task" onChange = {handleTaskInput} value = {newTask}/>
-            <button>Submit</button>
-            
-            </form>
-            
-            
-            </li>
-          )
-
-        })
-
-        }
+        
       </ul>
 
       <form onSubmit={handleTaskSubmit}> 
